@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HFU Cookie AR</title>
+
+    <script src="https://aframe.io/releases/0.8.2/aframe.min.js"></script>
+    <script src="https://jeromeetienne.github.io/AR.js/aframe/build/aframe-ar.js"></script>
+
+    <script>
+
+        AFRAME.registerComponent('snowfall', {
+            schema: { count: { type: 'int', default: 200 } },
+            init: function () {
+                const marker = this.el;
+                this.flakes = [];
+
+                for (let i = 0; i < this.data.count; i++) {
+                    const flake = document.createElement('a-sphere');
+                    flake.setAttribute('radius', 0.015);
+                    flake.setAttribute('color', '#FFFFFF'); 
+
+
+                    flake.setAttribute('position', {
+                        x: (Math.random() * 3 - 1.5),
+                        y: (Math.random() * 2.5 + 1.5),
+                        z: (Math.random() * 3 - 1.5)
+                    });
+
+                    marker.appendChild(flake);
+                    this.flakes.push(flake);
+                }
+            },
+            tick: function () {
+                const resetPoint = -1.8;
+                const startHeight = 2.5;
+
+                this.flakes.forEach(flake => {
+                    const pos = flake.getAttribute('position');
+                    pos.y -= 0.005; 
+                    if (pos.y < resetPoint) {
+                        pos.y = startHeight;
+                        pos.x = (Math.random() * 3 - 1.5);
+                        pos.z = (Math.random() * 3 - 1.5);
+                    }
+                    flake.setAttribute('position', pos);
+                });
+            }
+        });
+    </script>
+</head>
+
+<body style="margin:0; overflow:hidden;">
+
+<a-scene embedded arjs>
+    
+    <a-marker type="pattern" url="pattern-CookieBild.patt">
+
+    
+        <a-entity snowfall="count: 200"></a-entity>
+
+        <a-entity 
+            look-at="[camera]"
+            position="0 1.2 0"
+            scale="1.4 1.4 1.4"
+            animation="property: object3D.scale; from: 0.1 0.1 0.1; to: 1.4 1.4 1.4; dur: 1000; easing: easeOutElastic; once: true">
+
+            <a-entity
+                rotation="-90 0 0"
+                text="
+                value: HFU-COOKIES\n\n150g Butter\n180g brauner Zucker\n1 EL Vanilleextrakt\n1 Ei (L)\n200g Mehl\n2 TL Backpulver\n100g Macadamianuesse\n100g white Chocolate Chunks\n\n(180grad Ober/Unterhitze für 9 bis 12 min);
+                font: mozillavr;
+                anchor: center;
+                align: center;
+                lineHeight: 80;
+                wrapCount: 40;
+                color: #000000">
+            </a-entity>
+
+        </a-entity>
+
+    </a-marker>
+
+    <a-entity camera></a-entity>
+
+</a-scene>
+
+</body>
+</html>
